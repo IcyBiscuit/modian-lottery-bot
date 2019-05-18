@@ -1,0 +1,6 @@
+aiohttp
+asyncio
+aiomysql
+uvloop
+APScheduler
+aiocqhttp

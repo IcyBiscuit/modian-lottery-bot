@@ -1,0 +1,16 @@
+# vscode config
+.vscode
+
+# python venv
+bin
+include
+lib
+pyvenv.cfg
+
+__pycache__
+*.pyc
+
+cardpool
+*config.py
+.DS_Store
+test/test-repo
