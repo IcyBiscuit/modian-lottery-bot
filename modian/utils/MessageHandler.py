@@ -26,9 +26,15 @@ async def getRanks(pro_id: str, type: int = 1,
     返回集资榜单信息
     '''
     ranks = await modian.getRankings(pro_id, type=type, session=session)
-    msgs = []
-    for rank in ranks["data"][:limit]:
-        msgs.append(f"{rank['nickname']}:{rank['backer_money']}元")
+    # msgs = []
+    # for rank in ranks["data"][:limit]:
+    #     msgs.append(f"{rank['nickname']}: {rank['backer_money']}元")
+    if limit == 0:
+        msgs = [f"{rank['nickname']}: {rank['backer_money']}元"
+                for rank in ranks['data']]
+    else:
+        msgs = [f"{rank['nickname']}: {rank['backer_money']}元"
+                for rank in ranks['data'][:limit]]
 
     msg = f"目前支持榜前{limit}的聚聚是:\n"+'\n'.join(msgs)
     return msg
@@ -60,6 +66,7 @@ async def getNewOrders(proId: str,
         print('集资订单信息获取错误')
 
     lastTime: str = lastTimeDict[proId]
+
     newOrders: List[Dict[str, Any]] = []
     if len(orders['data']) > 0:
         orderFilter(orders['data'], newOrders, lastTime)
@@ -72,12 +79,14 @@ async def getNewOrders(proId: str,
     lastTimeDict[proId] = orders['data'][0]['pay_success_time']
     await insertNewOrders(proId, newOrders)
 
-    # msgs = parseNewOrders(newOrders, detail['data'][0], ranking)
+    # 不需要抽卡可以把这里注释掉
     lotteryMsgs = await lottery(newOrders)
     return parseNewOrdersAndLotteryResults(newOrders,
                                            detail['data'][0],
                                            lotteryMsgs, ranking)
 
+    # 此处是不抽卡的处理逻辑
+    # msgs = parseNewOrders(newOrders, detail['data'][0], ranking)
     # return msgs
 
 
@@ -85,9 +94,10 @@ def parseDetail(detail: Dict[str, Any]) -> str:
     '''
     将集资项目进度详情解析成字符串
     '''
+    percentage = round(detail['already_raised']/float(detail['goal'])*100, 2)
     return f"{detail['pro_name']}\n{url_prefix}{detail['pro_id']}\n" \
         + f"进度: {detail['already_raised']}/{detail['goal']} | " \
-        + f"({round(detail['already_raised']/float(detail['goal'])*100,2)}%)\n" \
+        + f"({percentage}%)\n" \
         + f"支持人数: {detail['backer_count']}\n{detail['left_time']}\n"
 
 
