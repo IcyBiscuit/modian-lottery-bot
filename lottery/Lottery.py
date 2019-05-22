@@ -1,12 +1,12 @@
+import asyncio
+import random
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Any, Dict, List
 
 import lottery.Core as Core
-from lottery.configs.config import config
-from lottery.Score import calculateScore
 import lottery.utils.DBUtil as DBUtil
-import asyncio
-import random
+from configs.LotteryConfig import config
+from lottery.Score import calculateScore
 
 baseMoney = Decimal(config['baseMoney'])
 
@@ -39,7 +39,7 @@ async def getLotteryResults(
     tasks: List[asyncio.Task] = [asyncio.create_task(
         getLotteryResultsTask(order)) for order in orders]
     # 执行并发任务
-    await asyncio.wait(tasks)
+    await asyncio.gather(*tasks)
 
     # 返回格式: results: List[Dict[str, Any]]
     return [task.result() for task in tasks]
@@ -52,7 +52,7 @@ async def getLotteryResultsTask(order: Dict[str, Any]):
     金额不足则为空列表,
     金额过抽卡线则为抽卡结果列表
     '''
-    # 获取摩点id
+    # 获取摩点id 字符串格式
     userId = str(order['user_id'])
     # 获得集资金额
     money = Decimal(order['backer_money']).quantize(
@@ -105,7 +105,6 @@ def lotteryResultsParser(results: List[Dict[str, Any]]) -> List[str]:
             msg = f"恭喜获得新卡!\n[CQ:image,file={card[3]}]\n"
             score = result['score']
             msg += f"本次积分: {score} 获得卡牌:\n{parseCardsData(cards)}"
-            print(msg)
             msgs.append(msg)
     return msgs
 

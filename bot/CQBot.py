@@ -1,5 +1,5 @@
 from aiocqhttp import CQHttp
-from bot.config import config
+from configs.BotConfig import config
 
 bot = CQHttp(api_root=config['url'],
              access_token=config['access_token'])

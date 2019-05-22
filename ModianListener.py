@@ -8,7 +8,7 @@ except ModuleNotFoundError:
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-import modian.Schedule as Schedule
+import modian.Schedule as modianSchedule
 from modian.configs.ModianConfig import config
 
 
@@ -25,11 +25,11 @@ if __name__ == "__main__":
         pkInterval = 30
 
     if "daily" in config:
-        sche.add_job(Schedule.dailySchedule, 'interval',
+        sche.add_job(modianSchedule.dailySchedule, 'interval',
                      seconds=dailyInterval, max_instances=3)
 
     if "pk" in config:
-        sche.add_job(Schedule.pkSchedule, 'interval',
+        sche.add_job(modianSchedule.pkSchedule, 'interval',
                      seconds=pkInterval, max_instances=3)
     sche.start()
     try:

@@ -1,5 +1,9 @@
-from setup import setup
-setup()
+try:
+    from setup import setup
+    setup()
+except Exception:
+    pass
+
 import asyncio
 import modian.utils.MessageHandler as MessageHandler
 
@@ -24,6 +28,6 @@ def getNewOrders():
     print(task)
 
 
-# getActiveOrders()
+getActiveOrders()
 # getRanks()
 # getNewOrders()

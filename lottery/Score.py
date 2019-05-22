@@ -1,8 +1,8 @@
 from typing import List, Set
 
 import lottery.cache.LotteryResultCache as LotteryResultCache
+from configs.LotteryConfig import config
 from lottery.cache.LotteryResultCache import lotteryCache
-from lottery.configs.config import config
 from lottery.utils.DBUtil import updateScore
 
 
@@ -15,17 +15,17 @@ async def calculateScore(userId: str, cards: List[tuple]) -> int:
     :param userId: 用户摩点id
     :param cards: 卡牌列表
     '''
-    usercards: Set[tuple] = await getUserCards(userId)
+    userCardsSet: Set[tuple] = await getUserCards(userId)
     count = 0
     score = 0
     for card in cards:
-        if card not in usercards:
-            usercards.add(card)
+        if card not in userCardsSet:
+            userCardsSet.add(card)
         else:
             count += 1
             score += config['score'][card[1]]
 
-    # score = count
+    # 更新数据库积分
     await updateScore(userId, score)
     return score
 

@@ -16,7 +16,7 @@
 
 ### 消息示例
 
-```
+```plaintext
 感谢 XXX 支援了XXX.XX元
 {集资项目}
 https://m.modian.com/project/{pro_id}
@@ -53,11 +53,11 @@ E:ω元
 
 - 暂不支持响应群成员发送的消息
 
-- 积分系统未经测试, 可能存在bug ~~(没有人用过)~~
+- 积分系统未经测试, 可能存在bug, 目前已知启动时期同一用户多个订单并发计算可能有积分丢失问题 (已尝试修复, 不敢保证数据一致)
 
 ## 使用方法
 
-**注意:** 由于Python对异步代码的支持有版本限制, 请使用**Python3.6**及以上版本
+**注意:** 由于Python对异步代码的支持有版本限制, 以及代码中使用的API对Python版本的要求, 请使用**Python3.7+**
 
 ### 创建数据库
 
@@ -106,7 +106,7 @@ PS C:\> \Scripts\Activate.ps1
 
 #### 数据库配置
 
-文件位于`db/config.py`
+文件`configs/DBConfig.py`
 
 示例:
 
@@ -122,7 +122,7 @@ config = {
 
 #### CQBot机器人配置
 
-文件位于 `bot/config.py`
+文件位于 `configs/BotConfig.py`
 
 示例:
 
@@ -143,7 +143,7 @@ config = {
 
 #### 抽卡卡牌配置
 
-文件位于`lottery/configs/config.py`
+文件位于`configs/LotteryConfig.py`
 
 示例:
 
@@ -174,7 +174,7 @@ config = {
 
 #### 摩点监听配置
 
-文件位于 `modian/configs/ModianConfig.py`
+文件位于 `configs/ModianConfig.py`
 
 示例:
 

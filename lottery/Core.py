@@ -3,8 +3,8 @@ from decimal import ROUND_HALF_UP, Decimal
 from random import normalvariate
 from typing import List
 
+from configs.LotteryConfig import config
 from lottery.CardPool import cardPool
-from lottery.configs.config import config
 from lottery.enum.CardType import CardType
 
 # 单次抽卡的金额基数

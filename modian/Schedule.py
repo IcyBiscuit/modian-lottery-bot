@@ -6,8 +6,10 @@ from aiohttp import ClientSession
 
 import bot.CQBot as bot
 import modian.utils.MessageHandler as MessageHandler
-from modian.configs.ModianConfig import config
+from configs.ModianConfig import config
 from modian.utils.DBUtil import getLatestTime
+
+loop = asyncio.get_event_loop()
 
 
 async def initLatestTime() -> Dict[str, str]:
@@ -24,8 +26,7 @@ async def initLatestTime() -> Dict[str, str]:
             latestTime[pro_id] = ''
     return latestTime
 
-loop = asyncio.get_event_loop()
-latestTime: dict = asyncio.get_event_loop().run_until_complete(initLatestTime())
+latestTime: Dict[str, str] = loop.run_until_complete(initLatestTime())
 
 
 async def dailySchedule():
@@ -36,18 +37,12 @@ async def dailySchedule():
     # latestTime = await initLatesproId
     async with ClientSession() as session:
         try:
-            # tasks = []
-            # for pro_id in dailyProIds:
-            #     tasks.append(
-            #         asyncio.create_task(MessageHandler.getNewOrders(
-            #             pro_id, latestTime[pro_id], session=session))
-            #     )
             queryTasks = [asyncio.create_task(
                 MessageHandler.getNewOrders(
                     pro_id, latestTime, session=session))
                 for pro_id in dailyProIds]
 
-            await asyncio.wait(queryTasks)
+            await asyncio.gather(*queryTasks)
 
             msgs = parseDailyResult(queryTasks)
             if len(msgs) > 0:
@@ -112,6 +107,6 @@ async def sendMsg(msgs: list):
     '''
     发送消息到QQ群
     '''
-    await asyncio.wait(
-        [asyncio.create_task(bot.sendMsg(msg))
+    await asyncio.gather(
+        *[asyncio.create_task(bot.sendMsg(msg))
             for msg in msgs])

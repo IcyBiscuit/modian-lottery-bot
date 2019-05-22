@@ -1,6 +1,6 @@
 import aiomysql
 import asyncio
-from db.config import config
+from configs.DBConfig import config
 
 
 async def creatPool() -> aiomysql.Pool:

@@ -10,7 +10,7 @@ except Exception:
     exit()
 
 
-from lottery.configs.config import config
+from configs.LotteryConfig import config
 from lottery.utils.DBUtil import initCardTable
 '''
 从磁盘中读取卡牌信息
@@ -19,6 +19,8 @@ from lottery.utils.DBUtil import initCardTable
 version = config['version']
 
 prefix = config['cardPoolFilePrefix']
+
+loop = asyncio.get_event_loop()
 
 cards = []
 for root, dirs, files in os.walk(prefix):
@@ -36,4 +38,4 @@ for root, dirs, files in os.walk(prefix):
             cards.append(row)
 
 
-asyncio.get_event_loop().run_until_complete(initCardTable(cards))
+loop.run_until_complete(initCardTable(cards))

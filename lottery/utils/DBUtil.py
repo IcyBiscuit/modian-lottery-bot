@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Set
 
 from aiomysql import Cursor
 
+from configs.LotteryConfig import config
 from db.Pooling import pool
-from lottery.configs.config import config
 
 
 async def initCardTable(cards: List[tuple]):
@@ -13,9 +13,9 @@ async def initCardTable(cards: List[tuple]):
     '''
     sql = """
     insert into cards
-    (level, name, pic_dir, version)
+        (level, name, pic_dir, version)
     values
-    (%s, %s, %s, %s)
+        (%s, %s, %s, %s)
     """
     async with pool.acquire() as conn:
         async with conn.cursor() as cursor:
@@ -32,9 +32,11 @@ async def getCardsByVersion(version: int) -> List[tuple]:
     '''
     sql = """
     select
-    id, level, name, pic_dir
-    from cards
-    where version = %s
+        id, level, name, pic_dir
+    from
+        cards
+    where
+        version = %s
     """
     async with pool.acquire() as conn:
         async with conn.cursor() as cursor:
@@ -50,9 +52,9 @@ async def markOrderOne(orderInfo: Dict[str, Any], cursor: Cursor):
     sql = """
     update daily
     set
-    lottery = 1
+        lottery = 1
     where
-    pay_date_time = %s and user_id = %s
+        pay_date_time = %s and user_id = %s
     """
     data = (orderInfo['pay_success_time'], orderInfo['user_id'])
     await cursor.execute(sql, data)
@@ -64,11 +66,11 @@ async def markOrderMany(orderInfoList: List[Dict[str, Any]], cursor: Cursor):
     '''
     sql = """
     insert into daily
-    (pay_date_time,user_id)
+        (pay_date_time,user_id)
     values
-    (%s, %s)
+        (%s, %s)
     on duplicate key update
-    lottery = 1;
+        lottery = 1;
     """
     datas = [(orderInfo['pay_success_time'], orderInfo['user_id'])
              for orderInfo in orderInfoList]
@@ -83,9 +85,9 @@ async def insertLotteryData(orderInfo: Dict[str, Any], cards: List[tuple]):
     '''
     sql = """
     insert ignore into lottery_record
-    (user_id, card_id, pay_date_time, insert_time, card_version)
+        (user_id, card_id, pay_date_time, insert_time, card_version)
     values
-    (%s, %s, %s, now(), %s)
+        (%s, %s, %s, now(), %s)
     """
     '''
     订单信息
@@ -163,13 +165,12 @@ async def updateScore(userId: str, score: int):
     :param score: 本次获得的积分
     '''
     sql = """
-    insert into
-    user
-    (modian_id, score)
+    insert into user
+        (modian_id, score)
     values
-    (%s, %s)
+        (%s, %s)
     on duplicate key update
-    score = score + %s
+        score = score + %s
     """
     async with pool.acquire() as conn:
         async with conn.cursor() as cursor:
@@ -249,10 +250,14 @@ def lotteryDataRowsBuilder(
     卡牌元组信息 (id,level,name,pic_dir)
     数据行信息 (user_id, card_id, pay_date_time, insert_time, card_version)
     '''
-    rows: List[tuple] = []
-    for card in cards:
-        cardId = card[0]
-        row = (orderInfo['user_id'], cardId,
-               orderInfo['pay_success_time'], config['version'])
-        rows.append(row)
+    # rows: List[tuple] = []
+    # for card in cards:
+    #     cardId = card[0]
+    #     row = (orderInfo['user_id'], cardId,
+    #            orderInfo['pay_success_time'], config['version'])
+    #     rows.append(row)
+    rows = [(orderInfo['user_id'],
+             card[0],
+             orderInfo['pay_success_time'],
+             config['version']) for card in cards]
     return rows

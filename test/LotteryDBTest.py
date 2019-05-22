@@ -1,8 +1,13 @@
-from setup import setup
-setup()
+try:
+    from setup import setup
+    setup()
+except Exception:
+    pass
+
 from lottery.cache.CardCache import cardCache
 import lottery.utils.DBUtil as DBUtil
 import asyncio
+from lottery.CardPool import cardPool
 
 loop = asyncio.get_event_loop()
 
@@ -36,10 +41,12 @@ def getOrders():
 
 
 def getCardsByUser():
-    f = DBUtil.getCardsByUserId('1295449')
+    f = DBUtil.getCardsByUserId('6037792')
     s: set = loop.run_until_complete(f)
     print(s)
-    print(cardCache['13'] in s)
+    # print(cardPool)
+    print((268, 'N', 'N9', 'cardpool/N/N9.png') in s)
+    # print(cardCache['13'] in s)
 
 
 # initCardPool()

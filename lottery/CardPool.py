@@ -1,7 +1,7 @@
 import asyncio
 from typing import Dict, List
 
-from lottery.configs.config import config
+from configs.LotteryConfig import config
 from lottery.utils.DBUtil import getCardsByVersion
 
 loop = asyncio.get_event_loop()

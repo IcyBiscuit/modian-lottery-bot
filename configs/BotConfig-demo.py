@@ -1,3 +1,4 @@
+
 config = {
     # 是否开启消息发送
     "enable": True,
