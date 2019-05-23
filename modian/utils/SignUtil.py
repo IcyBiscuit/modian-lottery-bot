@@ -1,5 +1,5 @@
-import urllib
 import hashlib
+import urllib
 
 
 def getSign(formData: dict) -> str:

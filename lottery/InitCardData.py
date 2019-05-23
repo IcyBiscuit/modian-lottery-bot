@@ -2,6 +2,7 @@ import asyncio
 import os
 import sys
 import pathlib
+
 try:
     BASE_PATH = pathlib.Path(__file__).parent.parent
     sys.path.append(BASE_PATH.absolute().as_posix())
@@ -28,7 +29,8 @@ for root, dirs, files in os.walk(prefix):
         absPath = os.path.join(root, dir)
         for card in os.listdir(absPath):
             # (level, name, pic_dir, version)
-            if "remoteFilePrefix" in config and config['remoteFilePrefix'] != '':
+            if "remoteFilePrefix" in config\
+                    and config['remoteFilePrefix'] != '':
                 pic_dir = os.path.join(
                     f"{config['remoteFilePrefix']}/{dir}", card)
             else:

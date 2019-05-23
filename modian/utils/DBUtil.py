@@ -1,3 +1,5 @@
+from typing import List
+
 from db.Pooling import pool
 
 
@@ -27,9 +29,10 @@ async def insertNewOrders(pro_id: str, orders: list):
         await conn.commit()
 
 
-async def getLatestTime():
+async def getLatestTime() -> List[tuple]:
     '''
-    根据pro_id筛选已保存的最新订单时间
+    取出已保存的最新订单时间
+    根据pro_id分组
     '''
     sql = """
     select

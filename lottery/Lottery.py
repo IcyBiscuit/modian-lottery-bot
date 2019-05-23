@@ -7,6 +7,7 @@ import lottery.Core as Core
 import lottery.utils.DBUtil as DBUtil
 from configs.LotteryConfig import config
 from lottery.Score import calculateScore
+import templates.lottery.LotteryTemplate as templates
 
 baseMoney = Decimal(config['baseMoney'])
 
@@ -20,7 +21,7 @@ async def lottery(orders: List[Dict[str, Any]]) -> List[str]:
     :returns: 解析后的抽卡结果 字符串列表
     '''
     lotteryResults = await getLotteryResults(orders)
-    msgs = lotteryResultsParser(lotteryResults)
+    msgs = lotteryResultsResolver(lotteryResults)
     return msgs
 
 
@@ -80,7 +81,7 @@ async def getLotteryResultsTask(order: Dict[str, Any]):
         }
 
 
-def lotteryResultsParser(results: List[Dict[str, Any]]) -> List[str]:
+def lotteryResultsResolver(results: List[Dict[str, Any]]) -> List[str]:
     '''
     将抽卡结果解析为文字消息
     '''
@@ -102,14 +103,16 @@ def lotteryResultsParser(results: List[Dict[str, Any]]) -> List[str]:
             # 本次积分: {积分} 获得卡牌:
             # {卡牌名称}×{数量}
             card = random.choice(cards)
-            msg = f"恭喜获得新卡!\n[CQ:image,file={card[3]}]\n"
             score = result['score']
-            msg += f"本次积分: {score} 获得卡牌:\n{parseCardsData(cards)}"
+            cardsResult = cardsDataResolver(cards)
+            # msg = f"恭喜获得新卡!\n[CQ:image,file={card[3]}]\n"
+            # msg += f"本次积分: {score} 获得卡牌:\n{parseCardsData(cards)}"
+            msg = templates.lotteryResultTemplate(card, cardsResult, score)
             msgs.append(msg)
     return msgs
 
 
-def parseCardsData(cards: List[tuple]) -> str:
+def cardsDataResolver(cards: List[tuple]) -> str:
     '''
     累计次数
     解析抽卡结果为文字
@@ -121,7 +124,8 @@ def parseCardsData(cards: List[tuple]) -> str:
             cardsDict[name] = 1
         else:
             cardsDict[name] += 1
-    msg = ""
-    for name, count in cardsDict.items():
-        msg += f"{name} × {count}\n"
+    # msg = f"{templates.cardTemplate(cardsDict)}"
+    msg = templates.cardTemplate(cardsDict)
+    # for name, count in cardsDict.items():
+    #     msg += f"{name} × {count}\n"
     return msg

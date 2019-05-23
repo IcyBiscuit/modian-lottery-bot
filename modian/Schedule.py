@@ -6,6 +6,7 @@ from aiohttp import ClientSession
 
 import bot.CQBot as bot
 import modian.utils.MessageHandler as MessageHandler
+import templates.modian.ModianTemplate as templates
 from configs.ModianConfig import config
 from modian.utils.DBUtil import getLatestTime
 
@@ -17,7 +18,7 @@ async def initLatestTime() -> Dict[str, str]:
     for pro_id in config['pro_ids']:
         latestTime[pro_id] = ''
 
-    r: tuple = await getLatestTime()
+    r: List[tuple] = await getLatestTime()
     for o in r:
         pro_id, pay_date_time = o
         if pay_date_time is not None:
@@ -48,7 +49,7 @@ async def dailySchedule():
             if len(msgs) > 0:
                 await sendMsg(msgs)
         except asyncio.TimeoutError as e:
-            print(f"订单查询超时, {e}")
+            print(f"订单查询超时, {e.with_traceback()}")
 
 
 async def pkSchedule():
@@ -76,7 +77,7 @@ async def pkSchedule():
             if len(msgs) > 0:
                 await sendMsg(msgs)
     except asyncio.TimeoutError as e:
-        print(f"订单查询超时, {e}")
+        print(f"订单查询超时, {e.with_traceback()}")
 
         # print(orders)
         # print(vsInfo)
@@ -92,15 +93,18 @@ def parseDailyResult(results: List[asyncio.Task]) -> List[str]:
     return list(chain(*[result.result() for result in results]))
 
 
-def parsePkResult(results: asyncio.Task, vsInfoTask: asyncio.Task) -> List[str]:
+def parsePkResult(results: asyncio.Task,
+                  vsInfoTask: asyncio.Task) -> List[str]:
     '''
     取出异步任务结果
     并将结果解析拼接成消息字符串
     '''
     orders: List[str] = results.result()
     vsInfo: str = vsInfoTask.result()
-    split = "----------------"
-    return [f"{order}\n{split}\n对家详情:\n{vsInfo}" for order in orders]
+    # split = "----------------"
+    # return [f"{order}\n{split}\n对家详情:\n{vsInfo}" for order in orders]
+    return [templates.pkTemplate(order, vsInfo)
+            for order in orders]
 
 
 async def sendMsg(msgs: list):
