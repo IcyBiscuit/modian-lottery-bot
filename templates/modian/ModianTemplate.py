@@ -68,7 +68,8 @@ def programmeDetailTemplate(detail: Dict[str, Any]) -> str:
     # 百分比
     percentage = round(detail['already_raised']/float(detail['goal'])*100, 2)
 
-    msg = f"{detail['pro_name']}\n{url_prefix}{detail['pro_id']}\n" \
+    msg = f"{detail['pro_name']}\n" \
+        + f"{url_prefix}{detail['pro_id']}\n" \
         + f"进度: {detail['already_raised']}/{detail['goal']} | " \
         + f"({percentage}%)\n" \
         + f"支持人数: {detail['backer_count']}\n{detail['left_time']}\n"
@@ -78,7 +79,7 @@ def programmeDetailTemplate(detail: Dict[str, Any]) -> str:
 def orderTemplate(order: Dict[str, Any]) -> str:
     '''
     集资订单信息模板
-    :param order: 制服订单对象(JSON)
+    :param order: 支付订单对象(JSON)
     '''
     '''
     数据示例

@@ -1,6 +1,6 @@
 aiohttp
 asyncio
 aiomysql
-uvloop
-APScheduler
 aiocqhttp
+APScheduler
+uvloop
