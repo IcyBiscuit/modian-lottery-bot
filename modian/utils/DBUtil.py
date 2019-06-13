@@ -3,7 +3,7 @@ from typing import List
 from db.Pooling import pool
 
 
-async def insertNewOrders(pro_id: str, orders: list):
+async def insert_new_orders(pro_id: str, orders: list):
     '''
     向数据库写入新订单信息
     '''
@@ -13,11 +13,6 @@ async def insertNewOrders(pro_id: str, orders: list):
     values
         (%s,%s,%s,%s)
     """
-    # data = []
-    # for order in orders:
-    #     row: tuple = (order['user_id'], pro_id, order['backer_money'],
-    #                   order['pay_success_time'])
-    #     data.append(row)
     data = [(order['user_id'],
              pro_id,
              order['backer_money'],
@@ -29,7 +24,7 @@ async def insertNewOrders(pro_id: str, orders: list):
         await conn.commit()
 
 
-async def getLatestTime() -> List[tuple]:
+async def get_latest_time() -> List[tuple]:
     '''
     取出已保存的最新订单时间
     根据pro_id分组

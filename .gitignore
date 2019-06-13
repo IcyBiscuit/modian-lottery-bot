@@ -18,3 +18,4 @@ db/config-demo.py
 lottery/configs/config-demo.py
 bot/config-demo.py
 modian/configs/ModianConfig-demo.py
+.sonarlint

@@ -3,11 +3,11 @@ from typing import Any, Dict, List
 url_prefix = "https://m.modian.com/project/"
 
 
-def rankingTemplate(rankingList: List[Dict[str, Any]],
-                    type: int = 1) -> str:
+def ranking_template(ranking_list: List[Dict[str, Any]],
+                     type: int = 1) -> str:
     '''
     集资排名消息模板
-    :param rankingList: 排名JSON列表
+    :param ranking_list: 排名JSON列表
     :param type
     type = 1 聚聚榜
     type = 2 打卡榜
@@ -30,21 +30,21 @@ def rankingTemplate(rankingList: List[Dict[str, Any]],
         "support_days": 422
     }
     '''
-    size = len(rankingList)
+    size = len(ranking_list)
     if type == 1:
         msg = f"目前集资榜前{size}的聚聚是:\n" +\
             '\n'.join([f"{rank['nickname']}: {rank['backer_money']}元"
-                       for rank in rankingList])
+                       for rank in ranking_list])
     elif type == 2:
         msg = f"目前打卡榜前{size}的聚聚是:\n" +\
             '\n'.join([f"{rank['nickname']}: {rank['support_days']}天"
-                       for rank in rankingList])
+                       for rank in ranking_list])
     else:
         msg = ''
     return msg
 
 
-def programmeDetailTemplate(detail: Dict[str, Any]) -> str:
+def programme_detail_template(detail: Dict[str, Any]) -> str:
     '''
     集资项目详情模板
     :param detail: 项目详情对象(JSON)
@@ -76,7 +76,7 @@ def programmeDetailTemplate(detail: Dict[str, Any]) -> str:
     return msg
 
 
-def orderTemplate(order: Dict[str, Any]) -> str:
+def order_template(order: Dict[str, Any]) -> str:
     '''
     集资订单信息模板
     :param order: 支付订单对象(JSON)
@@ -96,9 +96,9 @@ def orderTemplate(order: Dict[str, Any]) -> str:
     return msg
 
 
-def pkTemplate(order: str, vsInfo: str) -> str:
+def pk_template(order: str, vs_info: str) -> str:
     msg = f"{order}\n"\
         + "----------------\n"\
         + "对家详情:\n"\
-        + vsInfo
+        + vs_info
     return msg

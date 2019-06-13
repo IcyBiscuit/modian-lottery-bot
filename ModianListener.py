@@ -1,15 +1,15 @@
 import asyncio
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 try:
     import uvloop
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ModuleNotFoundError:
     pass
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 import modian.Schedule as modianSchedule
-from modian.configs.ModianConfig import config
+from configs.ModianConfig import config
 
 
 if __name__ == "__main__":
@@ -25,11 +25,11 @@ if __name__ == "__main__":
         pkInterval = 30
 
     if "daily" in config:
-        sche.add_job(modianSchedule.dailySchedule, 'interval',
+        sche.add_job(modianSchedule.daily_schedule, 'interval',
                      seconds=dailyInterval, max_instances=3)
 
     if "pk" in config:
-        sche.add_job(modianSchedule.pkSchedule, 'interval',
+        sche.add_job(modianSchedule.pk_schedule, 'interval',
                      seconds=pkInterval, max_instances=3)
     sche.start()
     try:

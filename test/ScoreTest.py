@@ -11,13 +11,13 @@ loop = asyncio.get_event_loop()
 
 
 def getUserCards():
-    f = Score.getUserCards('6037792')
+    f = Score.get_user_cards('6037792')
     r = loop.run_until_complete(f)
     print(r)
 
 
 def calculateScore():
-    f = Score.calculateScore(
+    f = Score.calculate_score(
         '6037792', [(294, 'SSR', 'SSR5', 'cardpool/SSR/SSR5.png'),
                     (8, 'R', 'R4', 'cardpool/R/R4.png'),
                     (8, 'R', 'R4', 'cardpool/R/R4.png')])

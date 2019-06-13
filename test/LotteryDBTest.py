@@ -7,19 +7,19 @@ except Exception:
 from lottery.cache.CardCache import cardCache
 import lottery.utils.DBUtil as DBUtil
 import asyncio
-from lottery.CardPool import cardPool
+from lottery.CardPool import card_pool
 
 loop = asyncio.get_event_loop()
 
 
 def initCardPool():
-    res = loop.run_until_complete(DBUtil.getCardsByVersion(0))
+    res = loop.run_until_complete(DBUtil.get_cards_by_version(0))
     print(res)
 
 
 def lottery():
     # (id,level,name,pic_dir)
-    f = DBUtil.insertLotteryData(
+    f = DBUtil.insert_lottery_data(
         {
             "user_id": 1295449,
             "nickname": "猫鏡",
@@ -35,16 +35,16 @@ def lottery():
 
 
 def getOrders():
-    f = DBUtil.getOrders()
+    f = DBUtil.get_orders()
     res = loop.run_until_complete(f)
     print(res)
 
 
 def getCardsByUser():
-    f = DBUtil.getCardsByUserId('6037792')
+    f = DBUtil.get_cards_by_user_id('6037792')
     s: set = loop.run_until_complete(f)
     print(s)
-    # print(cardPool)
+    # print(card_pool)
     print((268, 'N', 'N9', 'cardpool/N/N9.png') in s)
     # print(cardCache['13'] in s)
 

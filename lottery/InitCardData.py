@@ -12,7 +12,7 @@ except Exception:
 
 
 from configs.LotteryConfig import config
-from lottery.utils.DBUtil import initCardTable
+from lottery.utils.DBUtil import init_card_table
 '''
 从磁盘中读取卡牌信息
 并将对应信息写入数据库中
@@ -26,18 +26,18 @@ loop = asyncio.get_event_loop()
 cards = []
 for root, dirs, files in os.walk(prefix):
     for dir in dirs:
-        absPath = os.path.join(root, dir)
-        for card in os.listdir(absPath):
+        abs_path = os.path.join(root, dir)
+        for card in os.listdir(abs_path):
             # (level, name, pic_dir, version)
             if "remoteFilePrefix" in config\
                     and config['remoteFilePrefix'] != '':
                 pic_dir = os.path.join(
                     f"{config['remoteFilePrefix']}/{dir}", card)
             else:
-                pic_dir = os.path.join(absPath, card)
+                pic_dir = os.path.join(abs_path, card)
             row = (dir, card[:-4], pic_dir, version)
             print(row)
             cards.append(row)
 
 
-loop.run_until_complete(initCardTable(cards))
+loop.run_until_complete(init_card_table(cards))

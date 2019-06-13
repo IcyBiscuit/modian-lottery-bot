@@ -12,7 +12,7 @@ def dailySchedule():
 
 
 def initLatestTime():
-    r = loop.run_until_complete(Schedule.initLatestTime())
+    r = loop.run_until_complete(Schedule.init_latest_time())
 
     print(r)
 

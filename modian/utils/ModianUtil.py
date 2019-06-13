@@ -10,8 +10,8 @@ header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) Appl\
 eWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36'}
 
 
-async def getDetail(pro_ids: list,
-                    session: ClientSession = None) -> Dict[str, Any]:
+async def get_detail(pro_ids: list,
+                     session: ClientSession = None) -> Dict[str, Any]:
     '''
     项目筹款结果查询
     传入订单pro_id数组
@@ -28,20 +28,20 @@ async def getDetail(pro_ids: list,
     sign = getSign(form)
     form['sign'] = sign
 
-    body = await makeRequest(url, form, header, session=session)
+    body = await make_request(url, form, header, session=session)
     return json.loads(body)
 
 
-async def getDetailOne(pro_id: str,
-                       session: ClientSession = None) -> Dict[str, Any]:
+async def get_detail_one(pro_id: str,
+                         session: ClientSession = None) -> Dict[str, Any]:
     '''
     获取一条订单pri_id(字符串格式)
     '''
-    return await getDetail([pro_id], session=session)
+    return await get_detail([pro_id], session=session)
 
 
-async def getRankings(pro_id: str, type: int = 1, page: int = 1,
-                      session: ClientSession = None) -> Dict[str, Any]:
+async def get_rankings(pro_id: str, type: int = 1, page: int = 1,
+                       session: ClientSession = None) -> Dict[str, Any]:
     '''
     项目榜单查询
     type = 1 聚聚榜
@@ -61,13 +61,13 @@ async def getRankings(pro_id: str, type: int = 1, page: int = 1,
     }
     sign = getSign(form)
     form['sign'] = sign
-    body = await makeRequest(url, form, header, session=session)
+    body = await make_request(url, form, header, session=session)
     # print(body)
     return json.loads(body)
 
 
-async def getSortedOrders(pro_id, page=1, sort_by=1,
-                          session: ClientSession = None) -> Dict[str, Any]:
+async def get_sorted_orders(pro_id, page=1, sort_by=1,
+                            session: ClientSession = None) -> Dict[str, Any]:
     '''
     获取订单列表
     :param pro_id: 订单id
@@ -85,12 +85,12 @@ async def getSortedOrders(pro_id, page=1, sort_by=1,
     sign = getSign(form)
     form['sign'] = sign
 
-    body = await makeRequest(url, form, header, session=session)
+    body = await make_request(url, form, header, session=session)
     return json.loads(body)
 
 
-async def makeRequest(url: str, data: dict, headers: dict,
-                      session: ClientSession = None) -> str:
+async def make_request(url: str, data: dict, headers: dict,
+                       session: ClientSession = None) -> str:
     '''
     发送请求封装
     可提供复用的ClientSession连接池

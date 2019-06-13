@@ -8,82 +8,77 @@ import bot.CQBot as bot
 import modian.utils.MessageHandler as MessageHandler
 import templates.modian.ModianTemplate as templates
 from configs.ModianConfig import config
-from modian.utils.DBUtil import getLatestTime
+from modian.utils.DBUtil import get_latest_time
 
 loop = asyncio.get_event_loop()
 
 
-async def initLatestTime() -> Dict[str, str]:
-    latestTime = {}
+async def init_latest_time() -> Dict[str, str]:
+    latest_time = {}
     for pro_id in config['pro_ids']:
-        latestTime[pro_id] = ''
+        latest_time[pro_id] = ''
 
-    r: List[tuple] = await getLatestTime()
+    r: List[tuple] = await get_latest_time()
     for o in r:
         pro_id, pay_date_time = o
         if pay_date_time is not None:
-            latestTime[pro_id] = pay_date_time.strftime('%Y-%m-%d %H:%M:%S')
+            latest_time[pro_id] = pay_date_time.strftime('%Y-%m-%d %H:%M:%S')
         else:
-            latestTime[pro_id] = ''
-    return latestTime
+            latest_time[pro_id] = ''
+    return latest_time
 
-latestTime: Dict[str, str] = loop.run_until_complete(initLatestTime())
+latest_time: Dict[str, str] = loop.run_until_complete(init_latest_time())
 
 
-async def dailySchedule():
+async def daily_schedule():
     '''
     日常集资播报计划任务
     '''
-    dailyProIds = config['daily']['pro_ids']
-    # latestTime = await initLatesproId
+    daily_pro_ids = config['daily']['pro_ids']
     async with ClientSession() as session:
         try:
-            queryTasks = [asyncio.create_task(
-                MessageHandler.getNewOrders(
-                    pro_id, latestTime, session=session))
-                for pro_id in dailyProIds]
+            query_tasks = [asyncio.create_task(
+                MessageHandler.get_new_orders(
+                    pro_id, latest_time, session=session))
+                for pro_id in daily_pro_ids]
 
-            await asyncio.gather(*queryTasks)
+            await asyncio.gather(*query_tasks)
 
-            msgs = parseDailyResult(queryTasks)
+            msgs = parse_daily_result(query_tasks)
             if len(msgs) > 0:
-                await sendMsg(msgs)
+                await send_msg(msgs)
         except asyncio.TimeoutError as e:
             print(f"订单查询超时, {e.with_traceback()}")
 
 
-async def pkSchedule():
+async def pk_schedule():
     '''
     集资pk播报计划任务
     包含自家新订单播报
     以及对家集资详情播报
     '''
-    proId = config['pk']['me']
-    vsList = config['pk']['vs']
-    # latestTime = await initLatestTime()
+    pro_id = config['pk']['me']
+    vs_list = config['pk']['vs']
     try:
         async with ClientSession() as session:
-            orderTask = asyncio.create_task(
-                MessageHandler.getNewOrders(
-                    proId, latestTime, session=session))
+            order_task = asyncio.create_task(
+                MessageHandler.get_new_orders(
+                    pro_id, latest_time, session=session))
 
-            vsInfoTask = asyncio.create_task(
-                MessageHandler.getActiveOrders(
-                    vsList, session=session))
+            vs_info_task = asyncio.create_task(
+                MessageHandler.get_active_orders(
+                    vs_list, session=session))
 
-            await asyncio.gather(orderTask, vsInfoTask)
+            await asyncio.gather(order_task, vs_info_task)
 
-            msgs = parsePkResult(orderTask, vsInfoTask)
+            msgs = parse_pk_result(order_task, vs_info_task)
             if len(msgs) > 0:
-                await sendMsg(msgs)
+                await send_msg(msgs)
     except asyncio.TimeoutError as e:
         print(f"订单查询超时, {e.with_traceback()}")
 
-        # print(orders)
-        # print(vsInfo)
 
-
-def parseDailyResult(results: List[asyncio.Task]) -> List[str]:
+def parse_daily_result(results: List[asyncio.Task]) -> List[str]:
     '''
     取出异步任务结果
     将结果变为一维列表
@@ -93,24 +88,22 @@ def parseDailyResult(results: List[asyncio.Task]) -> List[str]:
     return list(chain(*[result.result() for result in results]))
 
 
-def parsePkResult(results: asyncio.Task,
-                  vsInfoTask: asyncio.Task) -> List[str]:
+def parse_pk_result(results: asyncio.Task,
+                    vs_info_task: asyncio.Task) -> List[str]:
     '''
     取出异步任务结果
     并将结果解析拼接成消息字符串
     '''
     orders: List[str] = results.result()
-    vsInfo: str = vsInfoTask.result()
-    # split = "----------------"
-    # return [f"{order}\n{split}\n对家详情:\n{vsInfo}" for order in orders]
-    return [templates.pkTemplate(order, vsInfo)
+    vs_info: str = vs_info_task.result()
+    return [templates.pk_template(order, vs_info)
             for order in orders]
 
 
-async def sendMsg(msgs: list):
+async def send_msg(msgs: list):
     '''
     发送消息到QQ群
     '''
     await asyncio.gather(
-        *[asyncio.create_task(bot.sendMsg(msg))
+        *[asyncio.create_task(bot.send_msg(msg))
             for msg in msgs])

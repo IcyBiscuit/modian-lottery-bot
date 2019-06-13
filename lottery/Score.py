@@ -3,44 +3,42 @@ from typing import List, Set
 import lottery.cache.LotteryResultCache as LotteryResultCache
 from configs.LotteryConfig import config
 from lottery.cache.LotteryResultCache import lotteryCache
-from lottery.utils.DBUtil import updateScore
+from lottery.utils.DBUtil import update_score
 
 
-async def calculateScore(userId: str, cards: List[tuple]) -> int:
+async def calculate_score(user_id: str, cards: List[tuple]) -> int:
     '''
     计算积分
     若用户已拥有卡牌
     则计数值增加并累计积分
     更新数据库值
-    :param userId: 用户摩点id
+    :param user_id: 用户摩点id
     :param cards: 卡牌列表
     '''
-    userCardsSet: Set[tuple] = await getUserCards(userId)
-    count = 0
+    user_cards_set: Set[tuple] = await get_user_cards(user_id)
     score = 0
     for card in cards:
-        if card not in userCardsSet:
-            userCardsSet.add(card)
+        if card not in user_cards_set:
+            user_cards_set.add(card)
         else:
-            count += 1
             score += config['score'][card[1]]
 
     # 更新数据库积分
-    await updateScore(userId, score)
+    await update_score(user_id, score)
     return score
 
 
-async def getUserCards(userId: str) -> Set[tuple]:
+async def get_user_cards(user_id: str) -> Set[tuple]:
     '''
     获取用户拥有的卡牌
     若缓存中未有用户数据
     则从数据库中获取数据
     并放入缓存中
-    :param userId: 用户摩点id
+    :param user_id: 用户摩点id
     :returns: 用户已拥有卡牌的哈希集
     '''
-    if userId not in lotteryCache:
-        usercards = await LotteryResultCache.initUserRecord(userId)
+    if user_id not in lotteryCache:
+        usercards = await LotteryResultCache.init_user_record(user_id)
     else:
-        usercards = lotteryCache[userId]
+        usercards = lotteryCache[user_id]
     return usercards

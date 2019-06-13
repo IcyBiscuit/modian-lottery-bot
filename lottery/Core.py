@@ -4,7 +4,7 @@ from random import normalvariate
 from typing import List
 
 from configs.LotteryConfig import config
-from lottery.CardPool import cardPool
+from lottery.CardPool import card_pool
 from lottery.enum.CardType import CardType
 
 # 单次抽卡的金额基数
@@ -24,31 +24,27 @@ def lottery(money: Decimal) -> List[tuple]:
 
     # 十连抽先保底一张SR
     if(times >= 10):
-        cards.append(pickCard(CardType.SR))
+        cards.append(pick_card(CardType.SR))
         times -= 1
 
     # 抽取剩余的卡牌
-    cards += [pickCard(pickCardLevel(money)) for i in range(times)]
-    # for i in range(times):
-    #     level = pickCardLevel(money)
-    #     card = pickCard(level)
-    #     cards.append(card)
+    cards += [pick_card(pick_card_level(money)) for i in range(times)]
     return cards
 
 
-def pickCard(level: CardType) -> tuple:
+def pick_card(level: CardType) -> tuple:
     '''
     从对应级别卡池中随机抽取一张卡牌
     返回对应卡牌信息
     :param level: 卡牌等级
     :returns: 对应等级的卡牌
     '''
-    cardList: List[tuple] = cardPool[level.value]
-    random.shuffle(cardList)
-    return random.choice(cardList)
+    card_list: List[tuple] = card_pool[level.value]
+    random.shuffle(card_list)
+    return random.choice(card_list)
 
 
-def pickCardLevel(money: Decimal) -> CardType:
+def pick_card_level(money: Decimal) -> CardType:
     '''
     选取卡牌级别
     TODO 可根据集资金额动态调整概率

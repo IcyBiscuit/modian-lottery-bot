@@ -6,5 +6,5 @@ from lottery.enum.CardType import CardType
 
 
 def pickCard():
-    res = Core.pickCard(CardType.N)
+    res = Core.pick_card(CardType.N)
     print(res)
