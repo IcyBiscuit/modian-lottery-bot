@@ -13,10 +13,10 @@ except Exception:
 
 from configs.LotteryConfig import config
 from lottery.utils.DBUtil import init_card_table
-'''
+"""
 从磁盘中读取卡牌信息
 并将对应信息写入数据库中
-'''
+"""
 version = config['version']
 
 prefix = config['cardPoolFilePrefix']

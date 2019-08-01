@@ -1,9 +1,11 @@
-import aiomysql
 import asyncio
+
+import aiomysql
+
 from configs.DBConfig import config
 
 
-async def creatPool() -> aiomysql.Pool:
+async def creat_pool() -> aiomysql.Pool:
     pool = await aiomysql.create_pool(
         host=config['host'],
         port=config['port'],
@@ -15,4 +17,4 @@ async def creatPool() -> aiomysql.Pool:
 
 
 loop = asyncio.get_event_loop()
-pool: aiomysql.Pool = loop.run_until_complete(creatPool())
+pool: aiomysql.Pool = loop.run_until_complete(creat_pool())

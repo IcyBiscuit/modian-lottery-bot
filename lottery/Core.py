@@ -13,12 +13,12 @@ base: Decimal = Decimal(config['baseMoney']).quantize(
 
 
 def lottery(money: Decimal) -> List[tuple]:
-    '''
+    """
     根据金额抽卡
     返回抽卡结果列表
     :param money: 集资金额
     :returns: 抽取卡牌的结果列表
-    '''
+    """
     times = int(money//base)
     cards: List[tuple] = []
 
@@ -33,24 +33,24 @@ def lottery(money: Decimal) -> List[tuple]:
 
 
 def pick_card(level: CardType) -> tuple:
-    '''
+    """
     从对应级别卡池中随机抽取一张卡牌
     返回对应卡牌信息
     :param level: 卡牌等级
     :returns: 对应等级的卡牌
-    '''
+    """
     card_list: List[tuple] = card_pool[level.value]
     random.shuffle(card_list)
     return random.choice(card_list)
 
 
 def pick_card_level(money: Decimal) -> CardType:
-    '''
+    """
     选取卡牌级别
     TODO 可根据集资金额动态调整概率
     :param money: 集资金额
     :returns: 抽取卡牌的等级
-    '''
+    """
     seed = abs(normalvariate(0, 1))
     level: CardType = CardType.N
 

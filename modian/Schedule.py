@@ -31,9 +31,9 @@ latest_time: Dict[str, str] = loop.run_until_complete(init_latest_time())
 
 
 async def daily_schedule():
-    '''
+    """
     日常集资播报计划任务
-    '''
+    """
     daily_pro_ids = config['daily']['pro_ids']
     async with ClientSession() as session:
         try:
@@ -43,8 +43,7 @@ async def daily_schedule():
                 for pro_id in daily_pro_ids]
 
             await asyncio.gather(*query_tasks)
-
-            msgs = parse_daily_result(query_tasks)
+            msgs = resolve_daily_result(query_tasks)
             if len(msgs) > 0:
                 await send_msg(msgs)
         except asyncio.TimeoutError as e:
@@ -52,11 +51,12 @@ async def daily_schedule():
 
 
 async def pk_schedule():
-    '''
+    """
     集资pk播报计划任务
     包含自家新订单播报
     以及对家集资详情播报
-    '''
+    :return None
+    """
     pro_id = config['pk']['me']
     vs_list = config['pk']['vs']
     try:
@@ -71,39 +71,37 @@ async def pk_schedule():
 
             await asyncio.gather(order_task, vs_info_task)
 
-            msgs = parse_pk_result(order_task, vs_info_task)
+            msgs = resolve_pk_result(order_task, vs_info_task)
             if len(msgs) > 0:
                 await send_msg(msgs)
     except asyncio.TimeoutError as e:
         print(f"订单查询超时, {e.with_traceback()}")
 
 
-def parse_daily_result(results: List[asyncio.Task]) -> List[str]:
-    '''
+def resolve_daily_result(results: List[asyncio.Task]) -> List[str]:
+    """
     取出异步任务结果
     将结果变为一维列表
-    '''
+    """
     # for result in results:
     #     print(result.result())
     return list(chain(*[result.result() for result in results]))
 
 
-def parse_pk_result(results: asyncio.Task,
-                    vs_info_task: asyncio.Task) -> List[str]:
-    '''
+def resolve_pk_result(results: asyncio.Task,
+                      vs_info_task: asyncio.Task) -> List[str]:
+    """
     取出异步任务结果
     并将结果解析拼接成消息字符串
-    '''
+    """
     orders: List[str] = results.result()
     vs_info: str = vs_info_task.result()
-    return [templates.pk_template(order, vs_info)
-            for order in orders]
+    return [templates.pk_template(order, vs_info) for order in orders]
 
 
 async def send_msg(msgs: list):
-    '''
+    """
     发送消息到QQ群
-    '''
+    """
     await asyncio.gather(
-        *[asyncio.create_task(bot.send_msg(msg))
-            for msg in msgs])
+        *[asyncio.create_task(bot.send_msg(msg)) for msg in msgs])

@@ -1,12 +1,12 @@
-from typing import List
+from typing import Any, Dict, List
 
 from db.Pooling import pool
 
 
-async def insert_new_orders(pro_id: str, orders: list):
-    '''
+async def insert_new_orders(pro_id: str, orders: List[Dict[str, Any]]):
+    """
     向数据库写入新订单信息
-    '''
+    """
     sql = """
     insert ignore into daily
         (user_id, pro_id, money, pay_date_time)
@@ -25,10 +25,10 @@ async def insert_new_orders(pro_id: str, orders: list):
 
 
 async def get_latest_time() -> List[tuple]:
-    '''
+    """
     取出已保存的最新订单时间
     根据pro_id分组
-    '''
+    """
     sql = """
     select
         pro_id, max(pay_date_time) latest

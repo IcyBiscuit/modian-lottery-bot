@@ -206,6 +206,42 @@ config = {
 
 消息模板位于`templates`文件夹下, 数据的结构均在注释中给出, 可以修改其中消息模板进行自定义消息内容
 
+### 自定义订单处理逻辑
+
+已提供默认播报(不写入数据库), 普通播报(订单信息写入数据库), 抽卡播报三种处理逻辑, 亦可以自行定义订单处理逻辑
+
+订单处理逻辑抽象为一抽象类`modian/handlers/AbstractOrderHandler.py`, 此抽象类仅有一抽象方法, 如下
+
+```python
+class AbstractOrderHandler(metaclass=ABCMeta):
+    @abstractmethod
+    async def handle(self, pro_id: str, orders: List[Dict[str, Any]],
+                     detail: Dict[str, Any], ranking: str = '') -> List[str]:
+        raise NotImplementedError
+```
+
+可通过继承此抽象类并在子类中重写`handle`方法以实现自己的处理逻辑, 并在`modian/utils/MessageHandler.py`中指定`handler`实例即可, 示例:
+
+编写`AbstractOrderHandler`并覆写handle方法
+
+```python
+class DefaultHandler(AbstractOrderHandler):
+    async def handle(self, pro_id: str, orders: List[Dict[str, Any]],
+                     detail: Dict[str, Any], ranking: str = '') -> List[str]:
+        return [templates.order_template(order) +
+                templates.programme_detail_template(detail) +
+                ranking for order in orders]
+```
+
+在`modian/utils/MessageHandler.py`中指定`handler`实例
+
+```python
+from modian.handlers.DefaultHandler import DefaultHandler
+# 其他import...
+handler: AbstractOrderHandler = DefaultHandler()
+# 余下代码略...
+```
+
 ### 数据库卡牌数据初始化
 
 在首次使用之前, 或更换卡牌套装之后, 需要进行卡牌数据初始化 **(记得在配置文件中更换卡牌版本号)**

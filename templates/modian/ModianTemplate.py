@@ -5,15 +5,15 @@ url_prefix = "https://m.modian.com/project/"
 
 def ranking_template(ranking_list: List[Dict[str, Any]],
                      type: int = 1) -> str:
-    '''
+    """
     集资排名消息模板
     :param ranking_list: 排名JSON列表
     :param type
     type = 1 聚聚榜
     type = 2 打卡榜
     :param limit: 排名名额限制
-    '''
-    '''
+    """
+    """
     JSON数据示例
     集资榜单:
     {
@@ -29,7 +29,7 @@ def ranking_template(ranking_list: List[Dict[str, Any]],
         "rank": 1,
         "support_days": 422
     }
-    '''
+    """
     size = len(ranking_list)
     if type == 1:
         msg = f"目前集资榜前{size}的聚聚是:\n" +\
@@ -45,11 +45,11 @@ def ranking_template(ranking_list: List[Dict[str, Any]],
 
 
 def programme_detail_template(detail: Dict[str, Any]) -> str:
-    '''
+    """
     集资项目详情模板
     :param detail: 项目详情对象(JSON)
-    '''
-    '''
+    """
+    """
     数据示例
     detail:
     {
@@ -64,7 +64,7 @@ def programme_detail_template(detail: Dict[str, Any]) -> str:
         "mobile_cover": "https://p.moimg.net/bbs_attachments/2019/04/22/20190422_1555900256_5600.jpg?imageMogr2/auto-orient/strip",
         "left_time": "距离结束还剩【X小时Y分钟Z秒】"
     }
-    '''
+    """
     # 百分比
     percentage = round(detail['already_raised']/float(detail['goal'])*100, 2)
 
@@ -77,11 +77,11 @@ def programme_detail_template(detail: Dict[str, Any]) -> str:
 
 
 def order_template(order: Dict[str, Any]) -> str:
-    '''
+    """
     集资订单信息模板
     :param order: 支付订单对象(JSON)
-    '''
-    '''
+    """
+    """
     数据示例
     order:
     {
@@ -91,7 +91,7 @@ def order_template(order: Dict[str, Any]) -> str:
         "pay_success_time": "2019-05-12 19:21:29",
         "backer_money": 422
     }
-    '''
+    """
     msg = f"感谢 {order['nickname']} 支援了{order['backer_money']}元\n"
     return msg
 
